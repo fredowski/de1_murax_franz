@@ -1,66 +1,56 @@
-Praktikum Digitaltechnik
+RISCV de1_murax_franz
 ========================
 
-Im Rahmen des Praktikums Digitaltechnik werden kombinatorische und sequentielle Schaltungen mit dem Modelsim Simulator simuliert und mit der Intel Quartus Software für eine Altera FPGA synthetisiert. Die Schaltungen können auf dem Altera DE1 Board ausprobiert und untersucht werden. 
+Der fabelhafte RISCV Softcore auf dem Terasic DE1 Board! Für Franz.
 
-  * Boolesche Ausdrücke
-  * Binaer zu 7Segment Konverter
-  * Addierer
-  * Zaehler
-  * Automate
-  
-Technische Umsetzung
---------------------
+### Murax Plattform mit RISCV Prozessor aus SpinalHDL
 
-### Entwicklungsumgebung
+  * 50 MHz Taktfrequenz
+  * UART mit 115200 Baud
+  * GPIO an den Roten LEDs
+  * Timer
 
-Die Schaltungsteile sind in VHDL beschrieben. Als FPGA Board
-wird das Altera DE1 Board verwendet. Die Designsoftware ist kostenlos von Altera erhaeltlich. 
-
-  * Synthese: Altera Quartus II
-  * Simulation: Altera Mentor Modelsim (Web Edition)
-
-Die Designsoftware ist auf einer virtuellen Maschine fertig installiert. Eine Beschreibung ist hier: http://www.hs-augsburg.de/~beckmanf/dokuwiki/doku.php?id=ubuntu_virtual_cae_system
-
-### Ordnerstruktur
-
-src: hier sind alle VHDL Quelldateien
-sim: hier sind die Makefiles fuer die Simulation der Komponenten
-pnr: Place and Route - Die makefiles fuer die Synthese der Schaltung
-scripts: Globale scripts
-
-### Download, Simulation und Synthese 
-
-Das Projekt ist unter git Versionsverwaltung. Zum Download sind die folgenden Schritte notwendig: 
+### VHDL aus SpinalHDL
 
 ```
-mkdir projects
-cd projects
-git clone https://gitlab.elektrotechnik.hs-augsburg.de/beckmanf/digitaltechnikpraktikum.git
-cd digitaltechnikpraktikum
+cd VexRiscV
+sbt "runMain vexriscv.demo.de1_murax_franz"
+cp ./de1_murax_franz.vhd ../src/
 ```
 
-Hier die Simulation von geschalteten LEDs:
+### VHDL Simulation des Prozessors
+
+UART sendet 'A' und LEDs wechseln nach 1 Sekunde...
 
 ```
 cd sim
-cd ledsw
+cd de1_murax_franz
 make sim
 ```
 
-Die zugehörige Synthese:
+### FPGA Synthese und Download
 
 ```
-cd ../../pnr
-cd ledsw-make
-make quartus
-```
-
-Um das Design auf das Board zu laden muss das Board mit dem Kabel an den USB Anschluss des Rechners angeschlossen sein. Dann:
-
-```
+cd pnr
+cd de1_murax_franz
 make prog
 ```
 
-Ein einfaches make zeigt die moeglichen Targets. 
+### Software Build mit gcc
 
+```
+cd VexRiscvSocSoftware/projects/murax/demo
+make
+cp ./build/demo.hex ../../../../VexRiscv/src/main/ressource/hex/muraxDemo.hex
+```
+
+Dann nochmal VexRiscV bauen und nochmal FPGA Synthese. Der Code landet via VHDL im
+FPGA.
+
+### UART anschliessen an MAC
+
+Die UART läuft mit 115200 Baud. Mit einem FTDI USB UART Adapter kann man die UART vom DE1 Board anschliessen. Es wird eine Nachricht gesendet und die Eingaben kommen zurück. Auf MacOS:
+
+```
+screen /dev/tty.usbserial-FTALDMJL 115200
+```
