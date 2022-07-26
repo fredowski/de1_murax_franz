@@ -102,10 +102,11 @@ make
 
 Habe ich nicht ausprobiert, aber die JTAG Pins sind auf dem Expansionport 1 vom DE1 Board.
 
+```
 GPIO_1[1] - JTAG_TCK
 GPIO_1[3] - JTAG_TMS
 GPIO_1[5] - JTAG_TDI
 GPIO_1[7] - JTAG_TDO
-
+```
 
 
